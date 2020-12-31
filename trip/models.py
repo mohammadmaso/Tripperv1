@@ -44,6 +44,7 @@ class Trip(models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True) 
     auther = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='images/Places', blank=True, null=True)
     geo_json = models.FileField(blank=True,null=True,validators=[
         FileExtensionValidator(allowed_extensions=['geojson','gpx'])
     ])

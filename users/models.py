@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import datetime
+from trip.models import Trip
+
 
 
 class User(AbstractUser):
@@ -22,7 +24,13 @@ class User(AbstractUser):
     USERNAME_FIELD = "username"   # e.g: "username", "email"
     EMAIL_FIELD = "email"         # e.g: "email", "primary_email"
 
-    
+class UserLiking(models.Model):
+    user_id = models.ForeignKey(User, related_name="liker", on_delete=models.CASCADE)
+    trip_id = models.ForeignKey(Trip, related_name="followers", on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user_id', 'trip_id',)
+       
 
 class UserFollowing(models.Model):
     user_id = models.ForeignKey(User, related_name="following", on_delete=models.DO_NOTHING)

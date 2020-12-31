@@ -4,14 +4,19 @@ from users.serializers import UserSummerySerializer
 from datetime import date
 
 
-class ImageSerializer(serializers.ModelSerializer):
+# class ImageSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = TripImage
+#         exclude = ['exif']
+
+
+class CategorySerializer(serializers.ModelSerializer): # pylint: disable=function-redefined
     class Meta:
-        model = TripImage
-        exclude = ['exif']
-      
+        model = TripCategory
+        fields = '__all__'
+    
 
 class TripSerializer(serializers.ModelSerializer): # pylint: disable=function-redefined
-    images = serializers.PrimaryKeyRelatedField(many=True, queryset = TripImage.objects.all()) ## Performance bug !!! Shoud be nested or hyperlinkRelated Or slug relate??
     places = serializers.PrimaryKeyRelatedField(many=True, queryset = Place.objects.all())
     
     class Meta:
@@ -19,11 +24,10 @@ class TripSerializer(serializers.ModelSerializer): # pylint: disable=function-re
         fields = '__all__' 
 
 class TripSummerySerializer(serializers.ModelSerializer): 
-    #images = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     places = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    image_set = ImageSerializer(many=True,read_only=True)
-    auther = UserSummerySerializer()
+    autherdetail = UserSummerySerializer()
     trip_days = serializers.SerializerMethodField('get_days')
+    category = CategorySerializer()
 
     class Meta:
         model = Trip
@@ -34,7 +38,8 @@ class TripSummerySerializer(serializers.ModelSerializer):
             'description',
             'activities',
             'auther',
-            'image_set',
+            'autherdetail',
+            'image',
             'places',
             'trip_days',
             ]
