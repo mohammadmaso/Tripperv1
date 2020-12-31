@@ -7,7 +7,7 @@ from datetime import date
 # class ImageSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = TripImage
-#         exclude = ['exif']
+#         exclude = ['exif'] 
 
 
 class CategorySerializer(serializers.ModelSerializer): # pylint: disable=function-redefined
