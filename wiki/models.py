@@ -2,7 +2,6 @@ from django.db import models
 from users.models import User
 import datetime
 from django.core.validators import FileExtensionValidator
-from django.contrib.postgres.fields import ArrayField
 
 class Category(models.Model):
     title = models.CharField(max_length=255, verbose_name='Title')

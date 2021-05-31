@@ -2,7 +2,6 @@ from django.db import models
 from users.models import User
 import datetime
 from django.core.validators import FileExtensionValidator
-from django.contrib.postgres.fields import ArrayField
 # from exiffield.fields import ExifField
 # from exiffield.getters import exifgetter
 from django.core.validators import MaxValueValidator, MinValueValidator

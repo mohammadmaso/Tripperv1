@@ -9,14 +9,18 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-import dj_database_url
-from pathlib import Path
+import dotenv
 import os
+import django_heroku
+
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+dotenv_file = os.path.join(BASE_DIR, ".env")
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -49,7 +53,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
-    'django_extensions', # for get er model >>> python manage.py graph_models -a -g -o eer.png
+    "storages",
+
 
 ]
 
@@ -140,7 +145,7 @@ WSGI_APPLICATION = 'Tripper.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': 'mydatabase',
     }
 }
 
@@ -183,12 +188,17 @@ USE_TZ = True
 
 
 
-STATIC_URL = '/static/'
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+STATIC_URL = "/static/"
+
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
+
 
 # STATIC_URL = '/static/'
 # STATIC_ROOT = os.path.join(BASE_DIR, "static")
@@ -198,7 +208,16 @@ MEDIA_URL = '/media/'
 
 
 
+AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+AWS_S3_VERIFY = True
 
+django_heroku.settings(locals())
 
 GRAPH_MODELS = { # For er exporting 
     'all_applications' : True,
