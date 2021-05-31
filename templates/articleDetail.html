@@ -1,0 +1,48 @@
+{% extends "base_generic.html" %}
+{% block content %}
+{% load static %}
+<!-- Lightweight client-side loader that feature-detects and load polyfills only when necessary -->
+<script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
+
+<!-- Load the element definition -->
+<script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
+
+<!-- Simply set the `src` attribute to your MD file and win -->
+
+<div class='container'>
+    <div class='row justify-content-md-center mt-3'>
+        <div class="card col-10">
+            <div class="card-header">
+                <h3 class="card-title text-capitalize fs-4 fw-light">{{article.title}}</h3>
+            </div>
+            <div class="card-body ">
+                <span class="mb-3 badge bg-green-lt"><span
+                        class="mdi mdi-shape-outline mr-1"></span>{{article.category.title}}</span>
+                <br>
+                <div class="d-flex align-items-center">
+
+                    <span class="avatar  mr-2 rounded"
+                        style="background-image: url(../media/{{article.author.avatar}})"></span>
+                    <div>
+                        <div>{{article.author}}</div>
+                        <div class="text-muted">{{article.created_at|date:"Y F j" }}</div>
+                    </div>
+                </div>
+                {% if trip.image %}
+                <img src="../media/{{article.image}}" class="mt-3  w-50 rounded shadow">
+                {% endif %}
+
+                <p class='mt-4 text-capitalize fs-4 fw-bold'><span
+                        class="mdi mdi-clipboard-text-outline mr-1"></span>Summery</p>
+                <p class='mb-3 text-capitalize fs-6 fw-light'>{{article.description}}</p>
+                <p class='mt-4 text-capitalize fs-4 fw-bold'><span
+                        class="mdi mdi-clipboard-text-outline mr-1"></span>Reade More..</p>
+                <zero-md class='mb-3' src="../media/{{article.Context}}"></zero-md>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

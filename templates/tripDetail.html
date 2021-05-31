@@ -1,0 +1,146 @@
+{% extends "base_generic.html" %}
+{% block content %}
+{% load static %}
+<div class='container'>
+    <div class='row justify-content-md-center mt-3'>
+        <div class="card col-10">
+            <div class="card-header">
+                <h3 class="card-title text-capitalize fs-4 fw-light">{{trip.subject}}</h3>
+                <div class="mx-auto mr-1">
+                    {% if like %}
+                    <a href="{%url 'tripLiking' trip.id %}" class="ms-3 fs-4 text-red">
+                        <span class="mdi mdi-heart">
+                    </a>
+                    {%else%}
+                    <a href="{%url 'tripLiking' trip.id %}" class="ms-3 fs-4 text-muted">
+                        <span class="mdi mdi-heart-outline">
+
+                    </a>
+                    {%endif%}
+                </div>
+            </div>
+            <div class="card-body ">
+                <span class="mb-3 badge bg-green-lt">{{trip.get_category_display}}</span>
+                <br>
+                <p class='badge bg-indigo-lt text-capitalize fs-6 fw-light pt-3 pb-3'><span
+                        class="mdi mdi-update mr-1"></span>{{trip.start_date}} - {{trip.end_date}}</p>
+                <div class="d-flex align-items-center">
+
+                    <span class="avatar  mr-2 rounded"
+                        style="background-image: url(../media/{{trip.auther.avatar}})"></span>
+                    <div>
+                        <div>{{trip.auther}}</div>
+                        <div class="text-muted">{{trip.created_at|date:"Y F j" }}</div>
+                    </div>
+                </div>
+                {% if trip.image %}
+                <img src="../media/{{trip.image}}" class="mt-3  w-50 rounded shadow">
+                {% endif %}
+                <p class='mt-4 text-capitalize fs-4 fw-bold'><span class="mdi mdi-airballoon-outline mr-1"></span>trip
+                    Activities</p>
+                <p class='text-capitalize fs-6 fw-light'>{{trip.activities}}</p>
+                <hr>
+                <p class='mt-4 text-capitalize fs-4 fw-bold'><span
+                        class="mdi mdi-clipboard-text-outline mr-1"></span>trip description</p>
+                <p class='mb-3 text-capitalize fs-6 fw-light'>{{trip.description}}</p>
+                {% if trip.geo_json %}
+                <hr>
+                <p class='mt-4 text-capitalize fs-4 fw-bold'><span class="mdi mdi-map-outline mr-1"></span>trip track
+                </p>
+
+
+                <script src='https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js'></script>
+                <link href='https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css' rel='stylesheet' />
+                <script
+                    src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js">
+                </script>
+                <link rel="stylesheet"
+                    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css"
+                    type="text/css" />
+
+
+                <div class=" mt-3">
+                    <div class="col-12 card">
+                        <div id='map' style=' height: 600px;'></div>
+                        <script>
+                            mapboxgl.accessToken =
+                                'pk.eyJ1IjoibW9oYW1tYWRtYXNvIiwiYSI6ImNrYmFqdWJxNDA2NGwyem4zbjRtcGN5YWkifQ.WtmnjhRsLiqMPNYawpbqQA';
+                            var map = new mapboxgl.Map({
+                                container: 'map',
+                                style: 'mapbox://styles/mapbox/satellite-v9', // stylesheet location
+                                center: [53.688, 33], // starting position [lng, lat]
+                                zoom: 3 // starting zoom
+
+                            });
+                            map.addControl(
+                                new MapboxGeocoder({
+                                    accessToken: mapboxgl.accessToken,
+                                    mapboxgl: mapboxgl
+                                })
+                            );
+                            map.on('load', function () {
+                                map.loadImage(
+                                    '{% static "pin.png" %}',
+                                    // Add an image to use as a custom marker
+                                    function (error, image) {
+                                        if (error) throw error;
+                                        map.addImage('custom-marker', image);
+                                    })
+                            })
+                        </script>
+                        <script>
+                            var geojson
+                            fetch('../media/{{trip.geo_json}}')
+                                .then(response => response.json())
+                                .then(data => geojson = data);
+
+
+                            map.on('load', function (e) {
+                                map.addSource('{{ trip.id }}', {
+                                    type: 'geojson',
+                                    data: '../media/{{trip.geo_json}}',
+                                });
+                                map.addLayer({
+                                    'id': 'line{{ trip.id }}',
+                                    'type': 'line',
+                                    'source': '{{ trip.id }}',
+                                    'layout': {
+                                        'line-join': 'round',
+                                        'line-cap': 'round'
+                                    },
+                                    'paint': {
+                                        'line-width': 2
+                                    }
+
+                                });
+                                map.addLayer({
+                                    'id': 'places{{ trip.id }}',
+                                    'type': 'symbol',
+                                    'source': '{{ trip.id }}',
+                                    'layout': {
+                                        'icon-image': 'custom-marker',
+                                        'icon-allow-overlap': true
+                                    }
+                                });
+                                var bounds = new mapboxgl.LngLatBounds();
+
+                                geojson.features.forEach(function (feature) {
+                                    bounds.extend(feature.geometry.coordinates);
+                                });
+
+                                map.fitBounds(bounds);
+                            })
+                        </script>
+
+                    </div>
+                </div>
+
+
+
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

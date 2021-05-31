@@ -1,0 +1,87 @@
+{% extends "base_generic.html" %}
+{% block content %}
+{% load static %}
+<script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js"
+    integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async>
+</script>
+<div class="content">
+    <div class="container-xl">
+        <!-- Page title -->
+        <div class="page-header d-print-none">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="page-title">
+                        Trips
+                    </h2>
+                    <div class="text-muted mt-1">Explor among {{trips.count}} trips</div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row row-cards " data-masonry='{"percentPosition": true }'>
+            {%for trip in trips%}
+            <div class="col-sm-6 col-lg-4">
+                <div class="card">
+                    <a href="{% url 'tripDetail' trip.id %}" class="d-block">
+                        {% if trip.image %}
+                        <img src="../media/{{trip.image}}" class="card-img-top">
+                        {% else %}
+                        <img src="{% static 'placeholder.jpg'%}" class="card-img-top">
+                        {% endif %}
+                    </a>
+                    <div class="card-body">
+
+                        <p class="mb-0 text-capitalize fs-4 fw-light">{{trip.subject}}</p>
+                        <span class="mb-3 badge bg-green-lt">{{trip.get_category_display}}</span>
+
+                        {% comment %} <p class="text-uppercase fw-lighter">{{trip.get_category_display}}</p>
+                        {% endcomment %}
+                        <div class="d-flex align-items-center">
+                            <span class="avatar me-3 mr-2 rounded"
+                                style="background-image: url(../media/{{trip.auther.avatar}})"></span>
+                            <div>
+                                <div>{{trip.auther}}</div>
+                                <div class="text-muted">{{trip.created_at|date:"Y F j" }}</div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+        {% comment %} <div class="d-flex mt-2">
+            <ul class="pagination ms-auto">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                            stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <polyline points="15 6 9 12 15 18"></polyline>
+                        </svg>
+                        prev
+                    </a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+
+                <li class="page-item disabled">
+                    <a class="page-link" href="#">
+                        next <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <polyline points="9 6 15 12 9 18"></polyline>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </div> {% endcomment %}
+    </div>
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base_generic.html" %}
+{% block content %}
+{% load static %}
+
+
+<div class='container'>
+    <div class='row justify-content-md-center mt-3'>
+        <div class="card col-10">
+            <div class="card-header">
+                <h3 class="card-title text-capitalize fs-4 fw-light"><span
+                        class="mdi mdi-plus-circle-outline mr-1"></span>Add trip</h3>
+            </div>
+            <div class="card-body ">
+                <form action="" enctype='multipart/form-data' method='post'>
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input class="btn" type="submit" value="Submit">
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

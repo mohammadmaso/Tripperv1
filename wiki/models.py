@@ -13,6 +13,7 @@ class Article(models.Model):
     author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(blank=True,null= True, upload_to='images/articles')
+    description =  models.CharField(max_length=300 , null=True)
     Context = models.FileField(validators=[
         FileExtensionValidator(allowed_extensions=['html','md','txt'])
     ])

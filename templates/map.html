@@ -1,0 +1,111 @@
+{% extends "base_generic.html" %}
+{%block content%}
+{% load static %}
+
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css' rel='stylesheet' />
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet"
+    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css"
+    type="text/css" />
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
+<link rel="stylesheet"
+    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css"
+    type="text/css" />
+<div class="container mt-3">
+    <div class="col-12 card">
+        <div id='map' style=' height: 600px;'></div>
+        <script>
+            mapboxgl.accessToken =
+                'pk.eyJ1IjoibW9oYW1tYWRtYXNvIiwiYSI6ImNrYmFqdWJxNDA2NGwyem4zbjRtcGN5YWkifQ.WtmnjhRsLiqMPNYawpbqQA';
+            var map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/light-v10', // stylesheet location
+                center: [53.688, 33], // starting position [lng, lat]
+                zoom: 4 // starting zoom
+            });
+
+            map.addControl(
+                new MapboxDirections({
+                    accessToken: mapboxgl.accessToken
+                }),
+                'top-left'
+            );
+            map.on('load', function () {
+                map.loadImage(
+                    '{% static "pin.png" %}',
+                    // Add an image to use as a custom marker
+                    function (error, image) {
+                        if (error) throw error;
+                        map.addImage('custom-marker', image);
+                    })
+            })
+        </script>
+        {% for trip in trips %}
+        <script>
+            map.on('load', function () {
+                map.addSource('map{{ trip.id }}', {
+                    type: 'geojson',
+                    data: '../media/{{trip.geo_json}}',
+                });
+                map.addLayer({
+                    'id': 'mapline{{ trip.id }}',
+                    'type': 'line',
+                    'source': 'map{{ trip.id }}',
+                    'layout': {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    'paint': {
+                        'line-width': 2
+                    }
+
+                });
+                map.addLayer({
+                    'id': 'mapplaces{{ trip.id }}',
+                    'type': 'symbol',
+                    'source': 'map{{ trip.id }}',
+                    'layout': {
+                        'icon-image': 'custom-marker',
+                        'icon-allow-overlap': true
+                    }
+                });
+                map.on('click', 'mapplaces{{ trip.id }}', function (e) {
+                    new mapboxgl.Popup()
+                        .setLngLat(e.lngLat)
+                        .setHTML(`<div class="card">
+                    <a href="{% url 'tripDetail' trip.id %}" class="d-block">
+                        {% if trip.image %}
+                        <img src="../media/{{trip.image}}" class="card-img-top">
+                        {% else %}
+                        <img src="{% static 'placeholder.jpg'%}" class="card-img-top">
+                        {% endif %}
+                    </a>
+                    <div class="card-body">
+
+                        <p class="mb-0 text-capitalize fs-4 fw-light">{{trip.subject}}</p>
+                        <span class="mb-3 badge bg-green-lt">{{trip.get_category_display}}</span>
+
+                        {% comment %} <p class="text-uppercase fw-lighter">{{trip.get_category_display}}</p>
+                        {% endcomment %}
+                        <div class="d-flex align-items-center">
+                            <span class="avatar me-3 mr-2 rounded"
+                                style="background-image: url(../media/{{trip.auther.avatar}})"></span>
+                            <div>
+                                <div>{{trip.auther}}</div>
+                                <div class="text-muted">{{trip.created_at|date:"Y F j" }}</div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>`)
+                        .addTo(map);
+                });
+
+            })
+        </script>
+        {% endfor %}
+
+    </div>
+</div>
+{% endblock %}

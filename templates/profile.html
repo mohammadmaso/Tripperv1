@@ -1,0 +1,44 @@
+{% extends "base_generic.html" %}
+{%block content%}
+{% load static %}
+
+<div class="container">
+    <!--Grid column-->
+    <div class='row justify-content-md-center'>
+        <div class="col-lg-6 col-md-6 mb-lg-0 mb-4 mt-3">
+            <!--Card-->
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">Profile </h3>
+                </div>
+                <!--Avatar-->
+                <div class="m-3 ">
+                    <img src="../media/{{user.avatar}}" width="150" class="shadow rounded-circle img-fluid ">
+                </div>
+                <div class="card-body">
+
+                    <!--Name-->
+                    <h4 class="font-weight-bold mb-4">{{user.first_name}} {{user.last_name}}</h4>
+                    <p class=" mb-4">{{user.phone}}</p>
+                    <p class=" mb-4">{{user.email}}</p>
+                    {% if user.about %}
+                    <p class="dark-grey-text mt-4"><i class="fa fa-quote-left pr-2"></i>{{user.about}}</p>
+                    {% endif%}
+                    <hr>
+                    <!--Quotation-->
+
+
+                    <form action="" method="post" enctype='multipart/form-data'>
+                        {% csrf_token %}
+                        {{form.as_p }}
+                        <input class='btn btn-success' type="submit" value="Change Profile data">
+                    </form>
+
+
+                </div>
+            </div>
+            <!--Card-->
+        </div>
+    </div>
+
+    {% endblock %}
